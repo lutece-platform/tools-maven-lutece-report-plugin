@@ -35,23 +35,50 @@
 
 package fr.paris.lutece.tools.maven.report;
 
+import java.util.List;
+
 /**
- * LineAnalyzer
+ * TemplateData
  */
-public interface LineAnalyzer 
+public class TemplateData 
 {
-    /**
-     * Analyse a template Line
-     * @param strLine The line content
-     * @param nLineNumber The line number
-     * @param result The result 
-     */
-    void analyzeLine( String strLine, int nLineNumber, AnalysisResult result );
+        private String _strTemplatePath;
+        private List<AnalysisIssue> _listIssues;
     
-    /**
-     * Gets Analyzer data
-     * @return the data
-     */
-    AnalyzerData getStats();
     
+       /**
+        * Returns the TemplatePath
+        * @return The TemplatePath
+        */ 
+        public String getTemplatePath()
+        {
+            return _strTemplatePath;
+        }
+    
+       /**
+        * Sets the TemplatePath
+        * @param strTemplatePath The TemplatePath
+        */ 
+        public void setTemplatePath( String strTemplatePath )
+        {
+            _strTemplatePath = strTemplatePath;
+        }
+    
+       /**
+        * Returns the Issues
+        * @return The Issues
+        */ 
+        public List<AnalysisIssue> getIssues()
+        {
+            return _listIssues;
+        }
+    
+       /**
+        * Sets the Issues
+        * @param listIssues The Issues
+        */ 
+        public void setIssues( List<AnalysisIssue> listIssues )
+        {
+            _listIssues = listIssues;
+        }
 }

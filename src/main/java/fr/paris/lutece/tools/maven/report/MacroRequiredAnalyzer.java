@@ -38,15 +38,23 @@ package fr.paris.lutece.tools.maven.report;
 /**
  * MacroRequiredAnalyzer
  */
-public class MacroRequiredAnalyzer implements LineAnalyzer
+public class MacroRequiredAnalyzer extends AbstractLineAnalyzer implements LineAnalyzer
 {
     private static final String[] MACROS_REQUIRED = {
         "table|@table",
         "i|@icon",
         "input|@input",
-        "select|@select"
+        "select|@select",
+        "a|@aButton",
+        "button|@button",
+        "form|@tForm",
+        "ul|@ul"
     };
+    
 
+    /**
+     * {@inheritDoc }
+     */
     public void analyzeLine( String strLine, int nLineNumber, AnalysisResult result )
     {
         for( String strMacroConversion : getMacroConversion() )
@@ -54,20 +62,44 @@ public class MacroRequiredAnalyzer implements LineAnalyzer
             String[] params = strMacroConversion.split( "\\|" );
             String strTag = params[0];
             String strMacro = params[1];
+            initRuleCounter( strMacroConversion );
             
             if( strLine.contains( "<" + strTag + " "))
             {
                 AnalysisIssue issue = new AnalysisIssue( "Tag '" + strTag + "' should be replaced by the '" + strMacro + "' macro." ,  nLineNumber );
                 result.addIssues( issue );
+                incrementRuleCounter( strMacroConversion );
             }
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    public AnalyzerData getStats()
+    {
+        AnalyzerData data = new AnalyzerData( "Macro required usage" );
+        for( String strMacroConversion : getMacroConversion() )
+        {
+            String[] params = strMacroConversion.split( "\\|" );
+            String strTag = params[0];
+            String strMacro = params[1];
+            AnalyzerIssueCategoryData aid = new AnalyzerIssueCategoryData();
+            aid.setIssueDescription( "Tag '" + strTag + "' should be replaced by the '" + strMacro + "' macro." );
+            aid.setCount( getRuleCounter( strMacroConversion ) );
+            data.addIssueCategory( aid );
+        }
+        return data;
+    }
+ 
+    /**
+     * Return the macro conversion list
+     * @return The list
+     */
     private String[] getMacroConversion()
     {
         return MACROS_REQUIRED;
     }
-    
-    
+
 
 }

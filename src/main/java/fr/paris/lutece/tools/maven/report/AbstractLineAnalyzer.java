@@ -31,27 +31,38 @@
  *
  * License 1.0
  */
-
-
 package fr.paris.lutece.tools.maven.report;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * LineAnalyzer
+ * AbstractLineAnalyzer
  */
-public interface LineAnalyzer 
+public abstract class AbstractLineAnalyzer implements LineAnalyzer
 {
-    /**
-     * Analyse a template Line
-     * @param strLine The line content
-     * @param nLineNumber The line number
-     * @param result The result 
-     */
-    void analyzeLine( String strLine, int nLineNumber, AnalysisResult result );
+
+    private Map<String, Integer> _mapCounter = new HashMap<String, Integer>();
+
+    protected void initRuleCounter( String strRuleKey )
+    {
+        Integer iCount = _mapCounter.get( strRuleKey );
+        if( iCount == null )
+        {
+            _mapCounter.put( strRuleKey, 0 );
+        }
+    }
     
-    /**
-     * Gets Analyzer data
-     * @return the data
-     */
-    AnalyzerData getStats();
+    protected void incrementRuleCounter( String strRuleKey )
+    {
+        int nCount = _mapCounter.get( strRuleKey );
+        _mapCounter.put( strRuleKey , nCount + 1 );
+
+    }
     
+    protected int getRuleCounter( String strRuleKey )
+    {
+        return _mapCounter.get( strRuleKey );
+    }
+
 }

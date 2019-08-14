@@ -31,27 +31,55 @@
  *
  * License 1.0
  */
-
-
 package fr.paris.lutece.tools.maven.report;
 
 /**
- * LineAnalyzer
+ * AnalyzerIssueCategoryData
  */
-public interface LineAnalyzer 
+public class AnalyzerIssueCategoryData
 {
+    // Variables declarations 
+
+    private String _strIssueDescription;
+    private int _nCount;
+
     /**
-     * Analyse a template Line
-     * @param strLine The line content
-     * @param nLineNumber The line number
-     * @param result The result 
+     * Returns the IssueDescription
+     *
+     * @return The IssueDescription
      */
-    void analyzeLine( String strLine, int nLineNumber, AnalysisResult result );
-    
+    public String getIssueDescription()
+    {
+        return _strIssueDescription;
+    }
+
     /**
-     * Gets Analyzer data
-     * @return the data
+     * Sets the IssueDescription
+     *
+     * @param strIssueDescription The IssueDescription
      */
-    AnalyzerData getStats();
-    
+    public void setIssueDescription( String strIssueDescription )
+    {
+        _strIssueDescription = strIssueDescription;
+    }
+
+    /**
+     * Returns the Count
+     *
+     * @return The Count
+     */
+    public int getCount()
+    {
+        return _nCount;
+    }
+
+    /**
+     * Sets the Count
+     *
+     * @param nCount The Count
+     */
+    public void setCount( int nCount )
+    {
+        _nCount = nCount;
+    }
 }

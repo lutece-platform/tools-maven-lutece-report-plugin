@@ -35,11 +35,7 @@
 package fr.paris.lutece.tools.maven.report;
 
 import java.io.File;
-import java.io.FileWriter;
-import java.io.Writer;
-import java.util.Locale;
 import junit.framework.TestCase;
-import org.apache.maven.doxia.module.xhtml.XhtmlSink;
 import org.apache.maven.doxia.module.xhtml.XhtmlSinkFactory;
 import org.apache.maven.doxia.sink.Sink;
 
@@ -52,6 +48,7 @@ public class TemplateReportTest extends TestCase
 
     /**
      * Test of executeReport method, of class TemplateReport.
+     * @throws java.lang.Exception
      */
     public void testAnalyze() throws Exception
     {
@@ -61,35 +58,15 @@ public class TemplateReportTest extends TestCase
         String strCurrent = System.getProperty( "user.dir" );
         File outputDir = new File( strCurrent + "/target" );
         Sink sink = factory.createSink( outputDir , "lutece-report-test.html" );
-        
-        sink.head();
-        sink.title();
-        sink.text( "Template analysis test report " );
-        sink.title_();
-        sink.head_();
 
-        sink.body();
-
-        // Heading 1
-        sink.section1();
-        sink.sectionTitle1();
-        sink.text( "Template analysis test report " );
-        sink.sectionTitle1_();
-        
-        
-
-        // Content
-        sink.paragraph();
+        ReportData data = new ReportData();
+        data.setReportName( "Template analysis test report" );
+        data.addAnalyzer( new DeprecatedMacrosAnalyzer() );
+        data.addAnalyzer( new MacroRequiredAnalyzer() );
         String strTemplates = strCurrent + "/src/test/resources/templates";
-        sink.text( "Files location: " );
-        sink.text( strTemplates );
-        sink.paragraph_();
-        
-        instance.analyze( sink, strTemplates , strTemplates );
-
-        // Close
-        sink.section1_();
-        sink.body_();
+        instance.analyze( data, strTemplates, strTemplates );
+        RenderService renderer = new RenderService();
+        renderer.renderReport( sink , data );
 
     }
     

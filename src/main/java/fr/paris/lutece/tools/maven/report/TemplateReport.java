@@ -37,8 +37,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 import org.apache.maven.doxia.sink.Sink;
@@ -64,9 +62,8 @@ import org.apache.maven.reporting.MavenReportException;
 
 public class TemplateReport extends AbstractMavenReport
 {
-    private static final String TEMPLATES_PATH = "/webapp/WEB-INF/templates";
 
-    private List<LineAnalyzer> _listLineAnalyzers;
+    private static final String TEMPLATES_PATH = "/webapp/WEB-INF/templates";
 
     /**
      * {@inheritDoc }
@@ -115,85 +112,48 @@ public class TemplateReport extends AbstractMavenReport
         logger.info( "Generating " + getOutputName() + ".html"
                 + " for " + project.getName() + " " + project.getVersion() );
 
-        // Get the Maven Doxia Sink, which will be used to generate the
-        // various elements of the document
-        Sink mainSink = getSink();
-        if( mainSink == null )
-        {
-            throw new MavenReportException( "Could not get the Doxia sink" );
-        }
+        ReportData data = new ReportData();
+        data.setReportName( "Template analysis report for " + project.getName() );
+        data.addAnalyzer( new DeprecatedMacrosAnalyzer() );
+        data.addAnalyzer( new MacroRequiredAnalyzer() );
 
-        // Page title
-        mainSink.head();
-        mainSink.title();
-        mainSink.text( "Template analysis report for " + project.getName() + " " + project.getVersion() );
-        mainSink.title_();
-        mainSink.head_();
-
-        mainSink.body();
-
-        // Heading 1
-        mainSink.section1();
-        mainSink.sectionTitle1();
-        mainSink.text( "Template analysis report" );
-        mainSink.sectionTitle1_();
-
-        // Content
-        mainSink.paragraph();
         String strTemplatePath = project.getBasedir().getAbsolutePath() + TEMPLATES_PATH;
-        mainSink.text( "Files location: " );
-        mainSink.text( TEMPLATES_PATH );
-        mainSink.paragraph_();
-
-        analyze( mainSink, strTemplatePath, strTemplatePath );
-
-        // Close
-        mainSink.section1_();
-        mainSink.body_();
+        analyze( data, strTemplatePath, strTemplatePath );
+        Sink mainSink = getSink();
+        RenderService renderer = new RenderService();
+        renderer.renderReport( mainSink, data );
 
     }
 
     /**
      * Analyze a path
-     * @param sink The sink to write results
+     *
+     * @param data The report data
      * @param strRoot The root path
      * @param strPath The current path
      */
-    void analyze( Sink sink, String strRoot, String strPath )
+    void analyze( ReportData data, String strRoot, String strPath )
     {
         File file = new File( strPath );
         if( file.isDirectory() )
         {
             for( String strFilePath : file.list() )
             {
-                analyze( sink, strRoot, file.getAbsolutePath() + "/" + strFilePath );
+                analyze( data, strRoot, file.getAbsolutePath() + "/" + strFilePath );
             }
         }
         else
         {
+            data.incrementTemplateCount();
+            TemplateData dt = new TemplateData();
+            dt.setTemplatePath( strPath.substring( strRoot.length() ).replace( '\\', '/' ) );
             AnalysisResult result = new AnalysisResult();
-            analyzeFile( file, result );
+            analyzeFile( data, file, result );
             if( !result.getIssues().isEmpty() )
             {
-                sink.section2();
-                String strRelativePath = strPath.substring( strRoot.length() ).replace( '\\', '/' );
-                sink.bold();
-                sink.text( strRelativePath );
-                sink.bold_();
-                sink.table();
-                for( AnalysisIssue issue : result.getIssues() )
-                {
-                    sink.tableRow();
-                    sink.tableCell();
-                    sink.text( issue.getMessage() );
-                    sink.tableCell_();
-                    sink.tableCell();
-                    sink.text( String.valueOf( issue.getLine() ) );
-                    sink.tableCell_();
-                    sink.tableRow_();
-                }
-                sink.table_();
-                sink.section2_();
+                dt.setIssues( result.getIssues() );
+                data.incrementIssueCount( result.getIssues().size() );
+                data.addTemplate( dt );
             }
         }
 
@@ -201,10 +161,11 @@ public class TemplateReport extends AbstractMavenReport
 
     /**
      * Analyze a file
+     *
      * @param file The file
      * @param result The result object to collect issues
      */
-    private void analyzeFile( File file, AnalysisResult result )
+    private void analyzeFile( ReportData data, File file, AnalysisResult result )
     {
         try
         {
@@ -213,7 +174,8 @@ public class TemplateReport extends AbstractMavenReport
             int nLine = 1;
             while( ( strLine = b.readLine() ) != null )
             {
-                for( LineAnalyzer analyzer : getLineAnalysers() )
+                data.incrementLineCount();
+                for( LineAnalyzer analyzer : data.getAnalyzers() )
                 {
                     analyzer.analyzeLine( strLine, nLine, result );
                 }
@@ -224,21 +186,6 @@ public class TemplateReport extends AbstractMavenReport
         {
             ex.printStackTrace();
         }
-    }
-
-    /**
-     * Get the list of all line analyzers
-     * @return The list
-     */
-    private List<LineAnalyzer> getLineAnalysers()
-    {
-        if( _listLineAnalyzers == null )
-        {
-            _listLineAnalyzers = new ArrayList<LineAnalyzer>();
-            _listLineAnalyzers.add( new DeprecatedMacrosAnalyzer() );
-            _listLineAnalyzers.add( new MacroRequiredAnalyzer() );
-        }
-        return _listLineAnalyzers;
     }
 
 }

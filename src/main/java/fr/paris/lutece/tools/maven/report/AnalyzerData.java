@@ -31,27 +31,67 @@
  *
  * License 1.0
  */
-
-
 package fr.paris.lutece.tools.maven.report;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
- * LineAnalyzer
+ * AnalyzerData
  */
-public interface LineAnalyzer 
+public class AnalyzerData
 {
+    // Variables declarations 
+
+    private String _strAnalyzerTitle;
+    private List<AnalyzerIssueCategoryData> _listIssueCategories = new ArrayList<AnalyzerIssueCategoryData>();
+
     /**
-     * Analyse a template Line
-     * @param strLine The line content
-     * @param nLineNumber The line number
-     * @param result The result 
+     * Constructor
+     * @param strAnalyserTitle Anamyser title
      */
-    void analyzeLine( String strLine, int nLineNumber, AnalysisResult result );
-    
+    AnalyzerData( String strAnalyserTitle )
+    {
+        _strAnalyzerTitle = strAnalyserTitle;
+    }
+
     /**
-     * Gets Analyzer data
-     * @return the data
+     * Returns the AnalyzerTitle
+     *
+     * @return The AnalyzerTitle
      */
-    AnalyzerData getStats();
-    
+    public String getAnalyzerTitle()
+    {
+        return _strAnalyzerTitle;
+    }
+
+    /**
+     * Sets the AnalyzerTitle
+     *
+     * @param strAnalyzerTitle The AnalyzerTitle
+     */
+    public void setAnalyzerTitle( String strAnalyzerTitle )
+    {
+        _strAnalyzerTitle = strAnalyzerTitle;
+    }
+
+    /**
+     * Returns the IssueCategories
+     *
+     * @return The IssueCategories
+     */
+    public List<AnalyzerIssueCategoryData> getIssueCategories()
+    {
+        return _listIssueCategories;
+    }
+
+    /**
+     * Sets the Issue category data
+     *
+     * @param data The Issue data
+     */
+    public void addIssueCategory( AnalyzerIssueCategoryData data )
+    {
+        _listIssueCategories.add( data );
+    }
 }

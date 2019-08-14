@@ -35,16 +35,22 @@
 
 package fr.paris.lutece.tools.maven.report;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * DeprecatedMacrosAnalyzer
  */
-public class DeprecatedMacrosAnalyzer implements LineAnalyzer
+public class DeprecatedMacrosAnalyzer extends AbstractLineAnalyzer implements LineAnalyzer
 {
+    
     private static final String[] DEPRECATED_MACROS = {
         "comboSortedWithParams",
         "comboWithParams",
         "comboSiteWithParams",
         "comboSite",
+        "combo",
+        "comboSorted",
         "fieldTextArea",
         "fieldInputCombo",
         "fieldInputRadioBoxInline",
@@ -57,26 +63,53 @@ public class DeprecatedMacrosAnalyzer implements LineAnalyzer
         "fieldInputPassword",
         "fieldInputText",
         "filterPanel",
-        "@dataTable "
+        "dataTable ",
+        "boxSized",
+        "rowBox",
+        "rowBoxHeader",
+        "row_class",
+        "coloredBg",
+        "unstyledList",
+        "dropdownList ",
     };
-
+    
+    /**
+     * {@inheritDoc }
+     */
     public void analyzeLine( String strLine, int nLineNumber, AnalysisResult result )
     {
         for( String strMacroName : getDeprecatedMacros() )
         {
+            initRuleCounter( strMacroName );
             if( strLine.contains( "@" + strMacroName + " "))
             {
                 AnalysisIssue issue = new AnalysisIssue( "Deprecated macro '@" + strMacroName + "'" ,  nLineNumber );
                 result.addIssues( issue );
+                incrementRuleCounter( strMacroName );
             }
         }
     }
+    
+    /**
+     * {@inheritDoc }
+     */
+    public AnalyzerData getStats()
+    {
+        AnalyzerData data = new AnalyzerData( "Deprecated macros" );
+        for( String strMacroName : getDeprecatedMacros() )
+        {
+            AnalyzerIssueCategoryData aid = new AnalyzerIssueCategoryData();
+            aid.setIssueDescription( "Deprecated macro '@" + strMacroName + "'" );
+            aid.setCount( getRuleCounter( strMacroName ) );
+            data.addIssueCategory( aid );
+        }
+        return data;
+    }
+ 
 
     private String[] getDeprecatedMacros()
     {
         return DEPRECATED_MACROS;
     }
-    
-    
 
 }
