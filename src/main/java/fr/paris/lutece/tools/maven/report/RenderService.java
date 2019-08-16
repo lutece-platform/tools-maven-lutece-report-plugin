@@ -168,7 +168,10 @@ public class RenderService
             sink.text( issue.getMessage() );
             sink.tableCell_();
             sink.tableCell();
+            sink.anchor( "template_link" );
+            sink.link( "templates/" + dt.getTemplatePath() + "?#" + issue.getLine() );
             sink.text( String.valueOf( issue.getLine() ) );
+            sink.anchor_();
             sink.tableCell_();
             sink.tableRow_();
         }

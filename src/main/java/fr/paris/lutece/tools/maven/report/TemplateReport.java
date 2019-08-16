@@ -63,8 +63,9 @@ import org.apache.maven.reporting.MavenReportException;
 public class TemplateReport extends AbstractMavenReport
 {
 
-    private static final String TEMPLATES_PATH = "/webapp/WEB-INF/templates";
+    private static final String PATH_SOURCE_TEMPLATES = "/webapp/WEB-INF/templates";
 
+    private String _strProjectPath;
     /**
      * {@inheritDoc }
      */
@@ -91,6 +92,15 @@ public class TemplateReport extends AbstractMavenReport
         // Description of the report when listed in the project-reports.html page of a project
         return "Lutece template analysis.";
     }
+    
+    /**
+     * Set the project path
+     * @param strProjectPath  the project path
+     */
+    public void setProjectPath( String strProjectPath )
+    {
+        _strProjectPath = strProjectPath;
+    }
 
     /**
      * Practical reference to the Maven project
@@ -104,7 +114,7 @@ public class TemplateReport extends AbstractMavenReport
     @Override
     protected void executeReport( Locale locale ) throws MavenReportException
     {
-
+        setProjectPath( project.getBasedir().getAbsolutePath() );
         // Get the logger
         Log logger = getLog();
 
@@ -117,8 +127,9 @@ public class TemplateReport extends AbstractMavenReport
         data.addAnalyzer( new DeprecatedMacrosAnalyzer() );
         data.addAnalyzer( new MacroRequiredAnalyzer() );
 
-        String strTemplatePath = project.getBasedir().getAbsolutePath() + TEMPLATES_PATH;
-        analyze( data, strTemplatePath, strTemplatePath );
+        String strTemplatePath = getProjectPath() + PATH_SOURCE_TEMPLATES;
+        FileViewerService.initViewFilesDirectory( getProjectPath() );
+        analyze( logger, data, strTemplatePath, strTemplatePath , 0 );
         Sink mainSink = getSink();
         RenderService renderer = new RenderService();
         renderer.renderReport( mainSink, data );
@@ -132,14 +143,17 @@ public class TemplateReport extends AbstractMavenReport
      * @param strRoot The root path
      * @param strPath The current path
      */
-    void analyze( ReportData data, String strRoot, String strPath )
+    void analyze( Log logger, ReportData data, String strRoot, String strPath, int nDepth )
     {
         File file = new File( strPath );
+        
+        FileViewerService.createViewFile( logger, getProjectPath() , strRoot , file, nDepth );
         if( file.isDirectory() )
         {
+            nDepth++;
             for( String strFilePath : file.list() )
             {
-                analyze( data, strRoot, file.getAbsolutePath() + "/" + strFilePath );
+                analyze( logger, data, strRoot, file.getAbsolutePath() + "/" + strFilePath , nDepth );
             }
         }
         else
@@ -148,7 +162,7 @@ public class TemplateReport extends AbstractMavenReport
             TemplateData dt = new TemplateData();
             dt.setTemplatePath( strPath.substring( strRoot.length() ).replace( '\\', '/' ) );
             AnalysisResult result = new AnalysisResult();
-            analyzeFile( data, file, result );
+            analyzeFile( logger, data, file, result );
             if( !result.getIssues().isEmpty() )
             {
                 dt.setIssues( result.getIssues() );
@@ -165,10 +179,11 @@ public class TemplateReport extends AbstractMavenReport
      * @param file The file
      * @param result The result object to collect issues
      */
-    private void analyzeFile( ReportData data, File file, AnalysisResult result )
+    private void analyzeFile( Log logger, ReportData data, File file, AnalysisResult result )
     {
         try
         {
+            logger.info(  "Analyzing template " + file.getPath() );
             BufferedReader b = new BufferedReader( new FileReader( file ) );
             String strLine;
             int nLine = 1;
@@ -181,11 +196,18 @@ public class TemplateReport extends AbstractMavenReport
                 }
                 nLine++;
             }
+            b.close();
         }
         catch( IOException ex )
         {
-            ex.printStackTrace();
+            logger.error( "Error while analyzing file : " + file.getPath() , ex);
         }
+    }
+    
+    
+    private String getProjectPath()
+    {
+        return _strProjectPath;
     }
 
 }

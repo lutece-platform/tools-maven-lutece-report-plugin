@@ -38,6 +38,8 @@ import java.io.File;
 import junit.framework.TestCase;
 import org.apache.maven.doxia.module.xhtml.XhtmlSinkFactory;
 import org.apache.maven.doxia.sink.Sink;
+import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.plugin.logging.SystemStreamLog;
 
 /**
  * TemplateReportTest
@@ -53,18 +55,21 @@ public class TemplateReportTest extends TestCase
     public void testAnalyze() throws Exception
     {
         System.out.println( "testAnalyze" );
+        Log logger = new SystemStreamLog();
         TemplateReport instance = new TemplateReport();
         XhtmlSinkFactory factory = new XhtmlSinkFactory();
-        String strCurrent = System.getProperty( "user.dir" );
-        File outputDir = new File( strCurrent + "/target" );
+        String strProjectPath = System.getProperty( "user.dir" );
+        File outputDir = new File( strProjectPath + "/target" );
         Sink sink = factory.createSink( outputDir , "lutece-report-test.html" );
 
         ReportData data = new ReportData();
         data.setReportName( "Template analysis test report" );
         data.addAnalyzer( new DeprecatedMacrosAnalyzer() );
         data.addAnalyzer( new MacroRequiredAnalyzer() );
-        String strTemplates = strCurrent + "/src/test/resources/templates";
-        instance.analyze( data, strTemplates, strTemplates );
+        String strTemplates = strProjectPath + "/src/test/resources/templates";
+        instance.setProjectPath( strProjectPath );
+        FileViewerService.initViewFilesDirectory( strProjectPath );
+        instance.analyze( logger, data, strTemplates, strTemplates , 0 );
         RenderService renderer = new RenderService();
         renderer.renderReport( sink , data );
 

@@ -44,6 +44,10 @@ public abstract class AbstractLineAnalyzer implements LineAnalyzer
 
     private Map<String, Integer> _mapCounter = new HashMap<String, Integer>();
 
+    /**
+     * Initialize the counter of the number violation of a given rule identified by its key 
+     * @param strRuleKey The rule key
+     */
     protected void initRuleCounter( String strRuleKey )
     {
         Integer iCount = _mapCounter.get( strRuleKey );
@@ -53,6 +57,10 @@ public abstract class AbstractLineAnalyzer implements LineAnalyzer
         }
     }
     
+    /**
+     * Increments the counter of a given rule identified by its key 
+     * @param strRuleKey The rule key
+     */
     protected void incrementRuleCounter( String strRuleKey )
     {
         int nCount = _mapCounter.get( strRuleKey );
@@ -60,6 +68,11 @@ public abstract class AbstractLineAnalyzer implements LineAnalyzer
 
     }
     
+    /**
+     * Gets the counter value
+     * @param strRuleKey The rule key
+     * @return  the counter value
+     */
     protected int getRuleCounter( String strRuleKey )
     {
         return _mapCounter.get( strRuleKey );

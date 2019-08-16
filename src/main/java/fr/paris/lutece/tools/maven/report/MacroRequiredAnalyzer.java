@@ -41,14 +41,18 @@ package fr.paris.lutece.tools.maven.report;
 public class MacroRequiredAnalyzer extends AbstractLineAnalyzer implements LineAnalyzer
 {
     private static final String[] MACROS_REQUIRED = {
-        "table|@table",
-        "i|@icon",
-        "input|@input",
-        "select|@select",
-        "a|@aButton",
-        "button|@button",
-        "form|@tForm",
-        "ul|@ul"
+        "table |@table",
+        "i |@icon",
+        "input |@input",
+        "select |@select",
+        "a |@aButton",
+        "button |@button",
+        "form |@tForm",
+        "ul |@ul",
+        "div class=\"row\"|@row",
+        "div class=\"col-|@columns",
+        "div class=\"box |@box",
+        "div class=\"form-group |@formGroup"
     };
     
 
@@ -64,7 +68,7 @@ public class MacroRequiredAnalyzer extends AbstractLineAnalyzer implements LineA
             String strMacro = params[1];
             initRuleCounter( strMacroConversion );
             
-            if( strLine.contains( "<" + strTag + " "))
+            if( strLine.contains( "<" + strTag ))
             {
                 AnalysisIssue issue = new AnalysisIssue( "Tag '" + strTag + "' should be replaced by the '" + strMacro + "' macro." ,  nLineNumber );
                 result.addIssues( issue );
