@@ -35,8 +35,10 @@ package fr.paris.lutece.tools.maven.report;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Locale;
 
 import org.apache.maven.doxia.sink.Sink;
@@ -118,21 +120,30 @@ public class TemplateReport extends AbstractMavenReport
         // Get the logger
         Log logger = getLog();
 
-        // Some info
-        logger.info( "Generating " + getOutputName() + ".html"
-                + " for " + project.getName() + " " + project.getVersion() );
-
-        ReportData data = new ReportData();
-        data.setReportName( "Template analysis report for " + project.getName() );
-        data.addAnalyzer( new DeprecatedMacrosAnalyzer() );
-        data.addAnalyzer( new MacroRequiredAnalyzer() );
-
         String strTemplatePath = getProjectPath() + PATH_SOURCE_TEMPLATES;
-        FileViewerService.initViewFilesDirectory( getProjectPath() );
-        analyze( logger, data, strTemplatePath, strTemplatePath , 0 );
-        Sink mainSink = getSink();
-        RenderService renderer = new RenderService();
-        renderer.renderReport( mainSink, data );
+        
+        if ( !(new File( strTemplatePath ).exists( ) ) )
+        {
+            logger.warn( "No templates found for :  " + project.getName() + " " + project.getVersion() );
+        }
+        else
+        {
+            // Some info
+            logger.info( "Generating " + getOutputName() + ".html"
+                    + " for " + project.getName() + " " + project.getVersion() );
+
+            ReportData data = new ReportData();
+            data.setReportName( "Template analysis report for " + project.getName() );
+            data.addAnalyzer( new DeprecatedMacrosAnalyzer() );
+            data.addAnalyzer( new MacroRequiredAnalyzer() );
+
+
+            FileViewerService.initViewFilesDirectory( getProjectPath() );
+            analyze( logger, data, strTemplatePath, strTemplatePath , 0 );
+            Sink mainSink = getSink();
+            RenderService renderer = new RenderService();
+            renderer.renderReport( mainSink, data );
+        }
 
     }
 
