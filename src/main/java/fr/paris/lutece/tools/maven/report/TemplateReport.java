@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,10 +35,8 @@ package fr.paris.lutece.tools.maven.report;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Locale;
 
 import org.apache.maven.doxia.sink.Sink;
@@ -71,6 +69,7 @@ public class TemplateReport extends AbstractMavenReport
     /**
      * {@inheritDoc }
      */
+    @Override
     public String getOutputName()
     {
         // This report will generate lutece-template-report.html when invoked in a project with `mvn site`
@@ -80,6 +79,7 @@ public class TemplateReport extends AbstractMavenReport
     /**
      * {@inheritDoc }
      */
+    @Override
     public String getName( Locale locale )
     {
         // Name of the report when listed in the project-reports.html page of a project
@@ -89,6 +89,7 @@ public class TemplateReport extends AbstractMavenReport
     /**
      * {@inheritDoc }
      */
+    @Override
     public String getDescription( Locale locale )
     {
         // Description of the report when listed in the project-reports.html page of a project
@@ -143,6 +144,9 @@ public class TemplateReport extends AbstractMavenReport
             Sink mainSink = getSink();
             RenderService renderer = new RenderService();
             renderer.renderReport( mainSink, data );
+            
+            // Style Guide 
+            StyleGuideDeployer.deploy( _strProjectPath , logger );
         }
 
     }
