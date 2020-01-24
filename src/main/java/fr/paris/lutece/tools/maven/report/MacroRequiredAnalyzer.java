@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -52,13 +52,14 @@ public class MacroRequiredAnalyzer extends AbstractLineAnalyzer implements LineA
         "div class=\"row\"|@row",
         "div class=\"col-|@columns",
         "div class=\"box |@box",
-        "div class=\"form-group |@formGroup"
+        "div class=\"form-group |@formGroup",
     };
     
 
     /**
      * {@inheritDoc }
      */
+    @Override
     public void analyzeLine( String strLine, int nLineNumber, AnalysisResult result )
     {
         for( String strMacroConversion : getMacroConversion() )
@@ -80,6 +81,7 @@ public class MacroRequiredAnalyzer extends AbstractLineAnalyzer implements LineA
     /**
      * {@inheritDoc }
      */
+    @Override
     public AnalyzerData getStats()
     {
         AnalyzerData data = new AnalyzerData( "Macro required usage" );

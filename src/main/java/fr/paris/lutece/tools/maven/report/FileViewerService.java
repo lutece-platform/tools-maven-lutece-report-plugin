@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2019, Mairie de Paris
+ * Copyright (c) 2002-2020, City of Paris
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -77,6 +77,7 @@ public class FileViewerService
 
     /**
      * Create a view template
+     * @param logger the logger
      * @param strProjectDirectory The project directory
      * @param strTemplatesDirectory The template directory
      * @param file The template as file
