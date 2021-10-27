@@ -1,11 +1,10 @@
-    <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-             xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
      
     <modelVersion>4.0.0</modelVersion>
      
     <groupId>fr.paris.lutece.tools</groupId>
     <artifactId>lutece-report-maven-plugin</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>maven-plugin</packaging>
      
     <name>Lutece report maven plugin</name>
@@ -122,7 +121,8 @@
         <connection>scm:git:https://github.com/lutece-platform/tools-maven-lutece-report-plugin.git</connection>
         <developerConnection>scm:git:https://github.com/lutece-platform/tools-maven-lutece-report-plugin.git</developerConnection>
         <url>https://github.com/lutece-platform/tools-maven-lutece-report-plugin.git</url>
-    </scm>
+      <tag>lutece-report-maven-plugin-1.0.0</tag>
+  </scm>
     
     <distributionManagement>
         <repository>
